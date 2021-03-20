@@ -1,18 +1,16 @@
 import logo from './logo.svg'
 import './App.css'
-// import Binance from 'binance-api-node'
-
-// const client = Binance()
-
-// const client2 = Binance({
-//   apiKey: process.env.REACT_APP_apiKey,
-//   apiSecret: process.env.REACT_APP_apiSecret
-// })
+import axios from 'axios'
 
 function App () {
-  // client.ws.partialDepth({ symbol: 'ETHBTC', level: 10 }, depth => {
-  //   console.log(depth)
-  // })
+  const baseUrl = 'https://api.binance.us/api/v3/'
+  const endpoint = 'depth'
+  const symbol = 'BTCUSD'
+  const url = baseUrl + endpoint + '?symbol=' + symbol + '&limit=10'
+  axios.get(url)
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
+
   return (
     <div className='App'>
       <header className='App-header'>
