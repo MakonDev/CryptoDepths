@@ -1,4 +1,3 @@
-import logo from './logo.svg'
 import './App.css'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -14,8 +13,7 @@ class App extends Component {
     const chart = am4core.create('chartdiv', am4charts.XYChart)
 
     // Add data
-    // chart.dataSource.url = 'https://poloniex.com/public?command=returnOrderBook&currencyPair=BTC_ETH&depth=50'
-    chart.dataSource.url = 'https://api.binance.us/api/v3/depth?symbol=BTCUSD&limit=100'
+    chart.dataSource.url = 'https://api.binance.us/api/v3/depth?symbol=BTCUSD&limit=50'
     chart.dataSource.reloadFrequency = 30000
     chart.dataSource.adapter.add('parsedData', function (data) {
       // Function to process (sort and calculate cummulative volume)
@@ -78,22 +76,26 @@ class App extends Component {
     })
 
     // Set up precision for numbers
-    chart.numberFormatter.numberFormat = '#,###.####'
+    chart.numberFormatter.numberFormat = '#,###.#'
 
     // Create axes
     const xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
     xAxis.dataFields.category = 'value'
+    xAxis.fontSize = 12
     // xAxis.renderer.grid.template.location = 0;
     xAxis.renderer.minGridDistance = 50
-    xAxis.title.text = 'Price (BTC/ETH)'
+    xAxis.title.text = 'Price (BTC/USD)'
 
     const yAxis = chart.yAxes.push(new am4charts.ValueAxis())
     yAxis.title.text = 'Volume'
+    yAxis.fontSize = 12
+    yAxis.color = am4core.color('white')
 
     // Create series
     const series = chart.series.push(new am4charts.StepLineSeries())
     series.dataFields.categoryX = 'value'
     series.dataFields.valueY = 'bidstotalvolume'
+    series.fontSize = 15
     series.strokeWidth = 2
     series.stroke = am4core.color('#0f0')
     series.fill = series.stroke
@@ -115,6 +117,7 @@ class App extends Component {
     series3.strokeWidth = 0
     series3.fill = am4core.color('white')
     series3.fillOpacity = 0.2
+    series3.fontSize = 5
 
     const series4 = chart.series.push(new am4charts.ColumnSeries())
     series4.dataFields.categoryX = 'value'
@@ -122,6 +125,7 @@ class App extends Component {
     series4.strokeWidth = 0
     series4.fill = am4core.color('white')
     series4.fillOpacity = 0.2
+    series4.fontSize = 5
 
     // Add cursor
     chart.cursor = new am4charts.XYCursor()
@@ -140,11 +144,8 @@ class App extends Component {
       <div className='App'>
         <Container fluid>
           <header className='App-header'>
-            <Row>
-              <img src={logo} className='App-logo' alt='logo' />
-            </Row>
             <Row className='Book-Row'>
-              <div id='chartdiv' style={{ width: '100%', height: '500px' }} />
+              <div id='chartdiv' style={{ width: '85%', height: '500px' }} />
             </Row>
           </header>
         </Container>
