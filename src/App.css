@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.Book-Row {
+  width: 100%;
+}
