@@ -1,0 +1,9 @@
+.Chart-Options {
+    margin-right: 5px;
+    margin-top: 15px;
+}
+
+.dropdown-menu {
+    height: 70px;
+    overflow-y: scroll;
+  }
