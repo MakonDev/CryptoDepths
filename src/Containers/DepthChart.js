@@ -3,17 +3,6 @@ import './DepthChart'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
-import Dropdown from 'react-bootstrap/Dropdown'
-import Badge from 'react-bootstrap/Badge'
-import Row from 'react-bootstrap/Row'
-
-// const baseUrl = 'https://api.binance.us/api/v3/'
-// const endpoint = 'depth'
-// const symbol = 'BTCUSD'
-// const url = baseUrl + endpoint + '?symbol=' + symbol + '&limit=10'
-// axios.get(url)
-//   .then(data => console.log(data))
-//   .catch(err => console.log(err))
 
 am4core.useTheme(am4themes_animated)
 
@@ -161,55 +150,8 @@ class DepthChart extends Component {
   }
 
   render () {
-    const { baseAssets, quoteAssets, limits, options, updateQuoteAsset, updateBaseAsset, updateLimit } = this.props
     return (
       <div className='Chart-Row'>
-        <Row className='Book-Row'>
-          <Dropdown className='Chart-Options'>
-            <Dropdown.Toggle variant='success' id='dropdown-basic'>
-              Select Base Asset
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {baseAssets.map((base) =>
-                <Dropdown.Item key={base} onClick={() => updateBaseAsset(base)}> {base} </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-          <Dropdown className='Chart-Options'>
-            <Dropdown.Toggle variant='success' id='dropdown-basic'>
-              Select Quote Asset
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {quoteAssets.map((quote) =>
-                <Dropdown.Item key={quote} onClick={() => updateQuoteAsset(quote)}> {quote} </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-          <Dropdown className='Chart-Options'>
-            <Dropdown.Toggle variant='success' id='dropdown-basic'>
-              Select Depth Limit
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {limits.map((limit) =>
-                <Dropdown.Item key={limit} onClick={() => updateLimit(limit)}> {limit} </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Row>
-        <Row className='Book-Row'>
-          <h3>
-            Base Asset
-            <Badge variant='secondary' style={{ marginLeft: '5px', marginRight: '5px' }}>{options.base}</Badge>
-          </h3>
-          <h3>
-            Quote Asset
-            <Badge variant='secondary' style={{ marginLeft: '5px', marginRight: '5px' }}>{options.quote}</Badge>
-          </h3>
-          <h3>
-            Depth Limit
-            <Badge variant='secondary' style={{ marginLeft: '5px', marginRight: '5px' }}>{options.limit}</Badge>
-          </h3>
-        </Row>
         <div id='chartdiv' style={{ width: '100%', height: '500px' }} />
       </div>
     )

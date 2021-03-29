@@ -5,6 +5,8 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import Button from 'react-bootstrap/Button'
 import DepthChart from './Containers/DepthChart'
+import DepthInsights from './Containers/DepthInsights'
+import Selectors from './Containers/Selectors'
 
 class App extends Component {
   constructor (props) {
@@ -101,22 +103,36 @@ class App extends Component {
               <br/>
               {!info && <Button variant='info' onClick={this.toggleInfo}> See Depth Insights </Button>}
             </Row>
+            {(chart || info) &&
+              <Selectors 
+                symbols={symbols} 
+                baseAssets={baseAssets} 
+                quoteAssets={quoteAssets} 
+                options={options}
+                updateBaseAsset={this.updateBaseAsset}
+                updateQuoteAsset={this.updateQuoteAsset}
+                updateLimit={this.updateLimit}
+                limits={limits}
+              />
+            }
             {chart && 
               <Row className='Book-Row'>
                 <DepthChart 
-                  symbols={symbols} 
-                  baseAssets={baseAssets} 
-                  quoteAssets={quoteAssets} 
-                  options={options}
-                  updateBaseAsset={this.updateBaseAsset}
-                  updateQuoteAsset={this.updateQuoteAsset}
-                  updateLimit={this.updateLimit}
-                  limits={limits}
+                symbols={symbols} 
+                baseAssets={baseAssets} 
+                quoteAssets={quoteAssets} 
+                options={options}
                 />
               </Row>
             }      
             {info &&
-              <p>test</p>}
+              <DepthInsights
+                symbols={symbols} 
+                baseAssets={baseAssets} 
+                quoteAssets={quoteAssets} 
+                options={options}
+              />
+            }
           </header>
         </Container>
       </div>
