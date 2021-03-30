@@ -116,7 +116,7 @@ class DepthInsights extends Component {
               {
                 x: bids.bidPrice,
                 y: bids.bidVolume,
-                type: 'histogram',
+                type: 'bar',
                 marker: {
                   line: {
                     width: 1
@@ -140,7 +140,7 @@ class DepthInsights extends Component {
               {
                 x: asks.askPrice,
                 y: asks.askVolume,
-                type: 'histogram',
+                type: 'bar',
                 marker: {
                   line: {
                     width: 1
