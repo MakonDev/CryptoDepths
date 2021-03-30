@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Plot from 'react-plotly.js'
 import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import numberWithCommas from '../Helpers/MiscFunctions'
 
 class DepthInsights extends Component {
   constructor (props) {
@@ -14,7 +16,8 @@ class DepthInsights extends Component {
       asks: {
         askPrice: [],
         askVolume: []
-      }
+      },
+      symbolPrice: 0
     }
   }
 
@@ -63,65 +66,126 @@ class DepthInsights extends Component {
           }
         })
         .catch(err => console.log(err))
+
+      const priceUrl = 'https://api.binance.us/api/v3/avgPrice?symbol='+ base + quote
+      axios.get(priceUrl)
+        .then(response => {
+          if (response.status === 200) {
+            this.setState({
+              ...this.state,
+              symbolPrice: response.data.price
+            })
+          }
+        })
+        .catch(err => console.log(err))
     } catch (e) {
       console.log(e)
     }
   }
 
   getLargestVolumes (bids, asks) {
-    const sizes = [...bids.bidVolume].sort(function(a, b){return b-a})
-    const prices = sizes.slice(0, 5).map((size) => { 
-      const index = bids.bidVolume.indexOf(size)
-      return bids.bidPrice[index]
-    })
+    const bidSizes = [...bids.bidVolume].sort(function(a, b){return b-a})
+    const askSizes = [...asks.askVolume].sort(function(a, b){return b-a})
+    let majorBidVolumes = []
+    let majorAskVolumes = []
+    for (let i = 0; i < 5; i++) {
+      const bidIndex = bids.bidVolume.indexOf(bidSizes[i])
+      const askIndex = asks.askVolume.indexOf(askSizes[i])
 
-    var majorVolumes = []
-    for (let i = 0; i < prices.length; i++) {
-      majorVolumes.push([prices[i], sizes[i]]);
+      const bidPrice = bids.bidPrice[bidIndex]
+      const askPrice = asks.askPrice[askIndex]
+
+      majorBidVolumes.push([bidPrice, bidSizes[i]])
+      majorAskVolumes.push([askPrice, askSizes[i]])
     }
 
-    return majorVolumes
+    return [majorBidVolumes, majorAskVolumes]
   }
 
   render () {
-    const { bids, asks } = this.state
-    const spikes = this.getLargestVolumes(bids, asks)
-    console.log(spikes)
+    const { bids, asks, symbolPrice } = this.state
+    const { options } = this.props
+    const [majorBidVolumes, majorAskVolumes] = this.getLargestVolumes(bids, asks)
     return (
-      <div>
+      <div style={{width: '100%'}}>
         <Row>
+          <Col sm={9} style={{padding: '0'}}>
           <Plot
+            style={{position: 'relative', display: 'inline-block', overflow: 'hidden'}}
             data={[
               {
                 x: bids.bidPrice,
                 y: bids.bidVolume,
-                type: 'histogram'
+                type: 'histogram',
+                marker: {
+                  line: {
+                    width: 1
+                  },
+                  color: 'green'
+                }
               }
             ]}
-            layout={{ width: 500, height: 400, title: 'Bids' }}
+            layout={{ 
+              width: 400, 
+              height: 400, 
+              title: 'Bids', 
+              xaxis: {title: "Price"}, 
+              yaxis: {title: "Volume"},
+              marginRight: '10px'
+            }}
           />
           <Plot
+            style={{position: 'relative', display: 'inline-block', overflow: 'hidden'}}
             data={[
               {
                 x: asks.askPrice,
                 y: asks.askVolume,
-                type: 'histogram'
+                type: 'histogram',
+                marker: {
+                  line: {
+                    width: 1
+                  },
+                  color: 'red'
+                }
               }
             ]}
-            layout={{ width: 500, height: 400, title: 'Asks',  }}
+            layout={{ 
+              width: 400, 
+              height: 400, 
+              title: 'Asks', 
+              xaxis: {title: "Price"}, 
+              yaxis: {title: "Volume"} 
+            }}
           />
-        </Row>
-        {spikes && <Row>
-          {spikes.map((spike) => {
-            return (
-              <div>
-            <p key={spike[0]}>{spike[0]} : {spike[1]}{this.props.options.base}</p>
-            <br/>
-            </div>
-            )
-          })}
-        </Row>
+          </Col>
+          {(majorBidVolumes && majorAskVolumes) && 
+          <Col sm={3} style={{fontSize: '12px', padding: '0'}}>
+            <h4>Top 5 Bid Spikes</h4>
+            <ol>
+              {majorBidVolumes.map((bid) => {
+                return (
+                <li key={bid[0]}>
+                  Price: {options.quote === 'USD' ? '$' : ''}{bid[0]} 
+                  - Volume: {bid[1]} 
+                  - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(bid[1] * symbolPrice)}</li>
+                )
+              })}
+            </ol>
+            <h3>Top 5 Ask Spikes</h3>
+            <ol>
+              {majorAskVolumes.map((ask) => {
+                  return (
+                  <li key={ask[0]}>
+                    Price: {options.quote === 'USD' ? '$' : ''}{ask[0]} 
+                    - Volume: {ask[1]} 
+                    - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(ask[1] * symbolPrice)}</li>
+                  )
+                })}
+            </ol>
+          </Col>
         }
+        </Row>
+        <h1>Average Price (5 min): {options.quote === 'USD' ? '$' : ''}{numberWithCommas(1*symbolPrice)}</h1>
       </div>
     )
   }
