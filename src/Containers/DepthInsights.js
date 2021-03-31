@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Plot from 'react-plotly.js'
 import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import numberWithCommas from '../Helpers/MiscFunctions'
 
 class DepthInsights extends Component {
@@ -108,19 +107,15 @@ class DepthInsights extends Component {
     const [majorBidVolumes, majorAskVolumes] = this.getLargestVolumes(bids, asks)
     return (
       <div style={{width: '100%'}}>
-        <Row>
-          <Col sm={9} style={{padding: '0'}}>
+        <Row style={{marginLeft: '0px', marginRight: '0px'}}>
           <Plot
-            style={{position: 'relative', display: 'inline-block', overflow: 'hidden'}}
+            style={{position: 'relative', display: 'inline-block', marginLeft: 'auto', marginRight: 'auto'}}
             data={[
               {
                 x: bids.bidPrice,
                 y: bids.bidVolume,
                 type: 'bar',
                 marker: {
-                  line: {
-                    width: 1
-                  },
                   color: 'green'
                 }
               }
@@ -134,17 +129,41 @@ class DepthInsights extends Component {
               marginRight: '10px'
             }}
           />
+          {(majorBidVolumes && majorAskVolumes) && 
+          <div style={{fontSize: '13px', padding: '0', marginLeft: 'auto', marginRight: 'auto'}}>
+            <h2 style={{color: '#17a2b8'}}>Average Price (5 min): {options.quote === 'USD' ? '$' : ''}{numberWithCommas(1*symbolPrice)}</h2>
+            <h4>Top 5 Bid Spikes</h4>
+            <ol>
+              {majorBidVolumes.map((bid) => {
+                return (
+                <li key={bid[0]}>
+                  Price: {options.quote === 'USD' ? '$' : ''}{bid[0]} 
+                  - Volume: {numberWithCommas(1*bid[1])} {options.base}
+                  - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(bid[1] * symbolPrice)}</li>
+                )
+              })}
+            </ol>
+            <h3>Top 5 Ask Spikes</h3>
+            <ol>
+              {majorAskVolumes.map((ask) => {
+                  return (
+                  <li key={ask[0]}>
+                    Price: {options.quote === 'USD' ? '$' : ''}{ask[0]} 
+                    - Volume: {numberWithCommas(1*ask[1])} {options.base} 
+                    - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(ask[1] * symbolPrice)}</li>
+                  )
+                })}
+            </ol>
+          </div>
+          }
           <Plot
-            style={{position: 'relative', display: 'inline-block', overflow: 'hidden'}}
+            style={{position: 'relative', display: 'inline-block', marginLeft: 'auto', marginRight: 'auto'}}
             data={[
               {
                 x: asks.askPrice,
                 y: asks.askVolume,
                 type: 'bar',
                 marker: {
-                  line: {
-                    width: 1
-                  },
                   color: 'red'
                 }
               }
@@ -157,35 +176,9 @@ class DepthInsights extends Component {
               yaxis: {title: "Volume"} 
             }}
           />
-          </Col>
-          {(majorBidVolumes && majorAskVolumes) && 
-          <Col sm={3} style={{fontSize: '12px', padding: '0'}}>
-            <h4>Top 5 Bid Spikes</h4>
-            <ol>
-              {majorBidVolumes.map((bid) => {
-                return (
-                <li key={bid[0]}>
-                  Price: {options.quote === 'USD' ? '$' : ''}{bid[0]} 
-                  - Volume: {bid[1]} 
-                  - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(bid[1] * symbolPrice)}</li>
-                )
-              })}
-            </ol>
-            <h3>Top 5 Ask Spikes</h3>
-            <ol>
-              {majorAskVolumes.map((ask) => {
-                  return (
-                  <li key={ask[0]}>
-                    Price: {options.quote === 'USD' ? '$' : ''}{ask[0]} 
-                    - Volume: {ask[1]} 
-                    - {options.quote === 'USD' ? '$' : ''}{numberWithCommas(ask[1] * symbolPrice)}</li>
-                  )
-                })}
-            </ol>
-          </Col>
-        }
         </Row>
-        <h1>Average Price (5 min): {options.quote === 'USD' ? '$' : ''}{numberWithCommas(1*symbolPrice)}</h1>
+        <Row>
+        </Row>
       </div>
     )
   }
