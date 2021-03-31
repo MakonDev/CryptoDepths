@@ -7,11 +7,14 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 am4core.useTheme(am4themes_animated)
 
 class DepthChart extends Component {
-  componentDidUpdate () {
+  componentDidUpdate (prevProps) {
     if (this.chart) {
       this.chart.dispose()
     }
-    this.componentDidMount()
+    if (prevProps.options !== this.props.options) {
+      console.log('changed')
+      this.componentDidMount()
+    }
   }
 
   componentDidMount () {
@@ -22,7 +25,7 @@ class DepthChart extends Component {
 
     // Add data
     chart.dataSource.url = 'https://api.binance.us/api/v3/depth?symbol=' + base + quote + '&limit=' + limit
-    chart.dataSource.reloadFrequency = 30000
+    chart.dataSource.reloadFrequency = 60000
     chart.dataSource.adapter.add('parsedData', function (data) {
       // Function to process (sort and calculate cummulative volume)
       function processData (list, type, desc) {
