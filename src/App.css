@@ -51,6 +51,11 @@
   }
 }
 
+.Exchange-Select {
+  margin-right: 5px;
+  width: auto !important;
+}
+
 .Book-Row {
   width: 100%;
   align-items: center;

@@ -12,7 +12,6 @@ class DepthChart extends Component {
       this.chart.dispose()
     }
     if (prevProps.options !== this.props.options) {
-      console.log('changed')
       this.componentDidMount()
     }
   }
@@ -22,9 +21,14 @@ class DepthChart extends Component {
     const base = this.props.options.base
     const quote = this.props.options.quote
     const limit = this.props.options.limit
+    const exchange = this.props.exchange
+    const level = this.props.coinbaseOptions.level
 
     // Add data
-    chart.dataSource.url = 'https://api.binance.us/api/v3/depth?symbol=' + base + quote + '&limit=' + limit
+
+    chart.dataSource.url = exchange === 'Binance'
+      ? 'https://api.binance.us/api/v3/depth?symbol=' + base + quote + '&limit=' + limit
+      : 'https://api.pro.coinbase.com/products/' + base + '-' + quote + '/book?level=' + level
     chart.dataSource.reloadFrequency = 60000
     chart.dataSource.adapter.add('parsedData', function (data) {
       // Function to process (sort and calculate cummulative volume)

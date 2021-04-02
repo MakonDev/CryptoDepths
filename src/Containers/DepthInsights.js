@@ -24,7 +24,6 @@ class DepthInsights extends Component {
 
   componentDidUpdate (prevProps) {
     if (prevProps.options !== this.props.options) {
-      console.log('changed')
       this.componentDidMount()
     }
   }
